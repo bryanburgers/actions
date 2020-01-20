@@ -1,0 +1,43 @@
+name: Docker
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      maxtrix:
+        toolchain: [1.40.0, beta-2020-01-20, nightly-2020-01-20]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build image
+      run: docker build --build-arg toolchain=${{ matrix.toolchain }} -t docker.pkg.github.com/bryanburgers/actions/rust-build:${{ matrix.toolchain }} .
+    - name: Push image
+      run: docker push docker.pkg.github.com/bryanburgers/actions/rust-build:${{ matrix.toolchain }}
+
+    # Output the current version of Cargo, so we can check in on this and
+    # remove the next step once GitHub Actions has a version of Rust that we
+    # can work with.
+    - run: cargo --version
+
+    # At the time of writing, GitHub Actions has Rust 1.39.0.
+    - name: Install rust >= 1.40.0
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: stable
+          override: true
+
+    - name: Install a nightly so we can use nightly rustfmt
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: nightly-2020-01-04
+
+    - run: cargo +nightly-2020-01-04 fmt -- --check
+
+    - name: Build
+      run: cargo build --verbose
+
+    - name: Run tests
+      run: cargo test --verbose
