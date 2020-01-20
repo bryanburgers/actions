@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Login to docker
-      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login --username bryanburgers --password-stdin
+      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login --username x-access-token --password-stdin
 
     - name: Pull potential previous image
       run: docker pull docker.pkg.github.com/bryanburgers/actions/rust-build:${{ matrix.toolchain }} | true
