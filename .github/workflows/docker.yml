@@ -7,7 +7,7 @@ jobs:
 
     runs-on: ubuntu-latest
     strategy:
-      maxtrix:
+      matrix:
         toolchain: [1.40.0, beta-2020-01-20, nightly-2020-01-20]
 
     steps:
